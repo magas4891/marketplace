@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_15_131835) do
+ActiveRecord::Schema.define(version: 2021_01_16_104620) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,17 @@ ActiveRecord::Schema.define(version: 2021_01_15_131835) do
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
+  create_table "perks", force: :cascade do |t|
+    t.string "title"
+    t.decimal "amount", precision: 8, scale: 2, default: "0.0"
+    t.text "description"
+    t.integer "quantity"
+    t.bigint "project_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["project_id"], name: "index_perks_on_project_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "title"
     t.decimal "donation_goal", default: "0.0"
@@ -90,11 +101,16 @@ ActiveRecord::Schema.define(version: 2021_01_15_131835) do
     t.boolean "admin", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "uid"
+    t.string "provider"
+    t.string "access_code"
+    t.string "publishable_key"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "users"
+  add_foreign_key "perks", "projects"
   add_foreign_key "projects", "users"
 end

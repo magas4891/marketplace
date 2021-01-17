@@ -54,6 +54,10 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'devise', '~> 4.7', '>= 4.7.3'
+gem 'dotenv-rails', '~> 2.7', '>= 2.7.6'
 gem 'friendly_id', '~> 5.4', '>= 5.4.1'
-gem 'sidekiq', '~> 6.1', '>= 6.1.2'
 gem 'name_of_person', '~> 1.1', '>= 1.1.1'
+gem 'sidekiq', '~> 6.1', '>= 6.1.2'
+gem 'stripe'
+gem 'omniauth'
+gem 'omniauth-stripe-connect'

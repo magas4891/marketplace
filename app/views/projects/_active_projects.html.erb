@@ -49,13 +49,13 @@
 
         <h3 class="text-2xl text-gray-900">Back this idea</h3>
 
-        <%# project.perks.each do |perk| %>
-<!--          <div class="p-4 mb-6 bg-gray-100 border rounded">-->
-<!--            <h4 class="text-lg font-bold text-center text-gray-900"><%#= perk.title %></h4>-->
-<!--            <p class="pb-2 mb-2 text-sm italic text-center border-b"><%#= perk.quantity %> left</p>-->
-<!--            <div class="py-2 text-gray-700">-->
-              <%#= simple_format perk.description %>
-<!--            </div>-->
+        <% project.perks.each do |perk| %>
+          <div class="p-4 mb-6 bg-gray-100 border rounded">
+            <h4 class="text-lg font-bold text-center text-gray-900"><%= perk.title %></h4>
+            <p class="pb-2 mb-2 text-sm italic text-center border-b"><%= perk.quantity %> left</p>
+            <div class="py-2 text-gray-700">
+              <%= simple_format perk.description %>
+            </div>
 
             <%# if user_signed_in? && perk.project.user_id == current_user.id %>
 <!--              <em class="block text-sm text-center">Sorry, You can't back your own idea</em>-->
@@ -63,11 +63,11 @@
               <%# if purchased_perk(perk) %>
 <!--                <p class="text-sm">You're already subscribed to this perk. <%#= link_to "Manage your subscriptions in your account settings", edit_user_registration_path, class: "text-blue-500 underline" %>.</p>-->
               <%# else %>
-                <%#= link_to "Back this idea for #{number_to_currency(perk.amount)} /mo",  new_subscription_path(amount: perk.amount, project: project, plan: "#{perk.title.parameterize}-perk_#{perk.id}"), class: "btn btn-default btn-expanded" %>
+            <%= link_to "Back this idea for #{number_to_currency(perk.amount)} /mo",  new_subscription_path(amount: perk.amount, project: project, plan: "#{perk.title.parameterize}-perk_#{perk.id}"), class: "btn btn-default btn-expanded" %>
               <%# end %>
             <%# end %>
-<!--          </div>-->
-        <%# end %>
+          </div>
+        <% end %>
       </div>
     </div>
 
