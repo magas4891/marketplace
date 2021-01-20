@@ -5,17 +5,12 @@ class SubscriptionsController < ApplicationController
 
   def create
     @project = Project.find(params[:project])
-    key = @project.user.access_code
-    Stripe.api_key = key
+    key = @project.user.uid
+    Stripe.api_key = @project.user.access_code
 
     plan_id = params[:plan]
     plan = Stripe::Plan.retrieve(plan_id)
     token = params[:stripeToken]
-
-    pp "=", "KEY", key
-    pp "=", "PLAN_ID", plan_id
-    pp "=", "PLAN", plan
-    pp "=", "TOKEN", token
 
     customer = if current_user.stripe_id?
                  Stripe::Customer.retrieve(current_user.stripe_id)
@@ -23,13 +18,11 @@ class SubscriptionsController < ApplicationController
                  Stripe::Customer.create(email: current_user.email, source: token)
                end
 
-    pp "=", "CUSTOMER", customer
-
-    Stripe::Subscription.create({
+    subscription = Stripe::Subscription.create({
                                                  customer: customer,
                                                  items: [
                                                    {
-                                                     price: '24-perk_1'
+                                                     price: plan_id
                                                    }
                                                  ],
                                                  expand: ["latest_invoice.payment_intent"],
@@ -37,7 +30,8 @@ class SubscriptionsController < ApplicationController
                                                }, stripe_account: key)
     options = {
       stripe_id: customer.id,
-      subscribed: true
+      subscribed: true,
+      stripe_subscription_id: subscription.id
     }
 
     options.merge!(

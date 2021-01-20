@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_18_123712) do
+ActiveRecord::Schema.define(version: 2021_01_20_170832) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 2021_01_18_123712) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "current_donation_amount", default: 0
-    t.datetime "expires_at", default: "2021-02-17 07:59:02"
+    t.datetime "expires_at", default: "2021-02-19 17:13:01"
     t.string "status", default: "active"
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 2021_01_18_123712) do
     t.string "card_exp_month"
     t.string "card_exp_year"
     t.string "card_type"
+    t.text "perk_subscriptions", default: [], array: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
