@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 2021_01_20_170832) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "current_donation_amount", default: 0
-    t.datetime "expires_at", default: "2021-02-19 17:13:01"
+    t.datetime "expires_at"
     t.string "status", default: "active"
     t.index ["user_id"], name: "index_projects_on_user_id"
   end

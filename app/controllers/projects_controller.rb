@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class ProjectsController < ApplicationController
   before_action :set_project, only: %i[show edit update destroy]
-  before_action :authenticate_user!, except: %i(index show)
+  before_action :authenticate_user!, except: %i[index show]
 
   # GET /projects
   # GET /projects.json
@@ -24,6 +26,7 @@ class ProjectsController < ApplicationController
   # POST /projects.json
   def create
     @project = current_user.projects.build(project_params)
+    @project.expires_at = DateTime.now + 30.days
 
     respond_to do |format|
       if @project.save

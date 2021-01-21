@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreatePerkPlansJob < ApplicationJob
   queue_as :default
 
@@ -5,15 +6,32 @@ class CreatePerkPlansJob < ApplicationJob
     key = project.user.access_code
     Stripe.api_key = key
 
+    prod = Stripe::Product.create({
+                                    name: project.title,
+                                    description: project.description
+                                  })
+
     project.perks.each do |perk|
-      Stripe::Plan.create({
-        id: "#{perk.title.parameterize}-perk_#{perk.id}",
-        amount: (perk.amount.to_r * 100).to_i,
+      Stripe::Price.create(
         currency: 'usd',
-        interval: 'month',
-        product: { name: perk.title },
-        nickname: perk.title.parameterize
-      })
+        unit_amount: (perk.amount.to_r * 100).to_i,
+        recurring: {
+          interval: 'month'
+        },
+        nickname: "#{perk.title.parameterize}-perk_#{perk.id}",
+        product: prod.id
+      )
     end
+
+    # project.perks.each do |perk|
+    #   Stripe::Plan.create(
+    #     id: "#{perk.title.parameterize}-perk_#{perk.id}",
+    #     amount: (perk.amount.to_r * 100).to_i,
+    #     currency: 'usd',
+    #     interval: 'month',
+    #     product: { name: perk.title },
+    #     nickname: perk.title.parameterize
+    #   )
+    # end
   end
 end

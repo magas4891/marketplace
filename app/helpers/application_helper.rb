@@ -8,6 +8,7 @@ module ApplicationHelper
   end
 
   def stripe_url
+    # "https://dashboard.stripe.com/oauth/authorize?response_type=code&client_id=#{ENV['STRIPE_CONNECT_CLIENT_ID']}&scope=read_write"
     "https://connect.stripe.com/oauth/authorize?response_type=code&client_id=#{ENV['STRIPE_CONNECT_CLIENT_ID']}&scope=read_write"
   end
 
