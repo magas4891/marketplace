@@ -7,7 +7,7 @@
     <label for="card-element" class="label">Credit or Debit Card</label>
     <div id="card-element"></div>
     <div id="card-errors" class="text-sm text-red-400" role='alert'></div>
-    <input type='hidden' name='plan' value='<%= params[:plan] %>'>
+    <input type='hidden' name='plan' value='<%= params[:perk] %>'>
     <input type='hidden' name='project' value='<%= params[:project] %>'>
     <button>Back <%= number_to_currency(params[:amount]) %> /mo toward <em><%= project.title %></em></button>
   </div>

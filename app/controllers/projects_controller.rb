@@ -81,6 +81,6 @@ class ProjectsController < ApplicationController
                                     :description,
                                     :thumbnail,
                                     :user_id,
-                                    perks_attributes: %i[id _destroy title description amount quantity])
+                                    perks_attributes: %i[id _destroy title description amount quantity stripe_price_id])
   end
 end

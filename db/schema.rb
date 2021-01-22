@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_20_170832) do
+ActiveRecord::Schema.define(version: 2021_01_22_075006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2021_01_20_170832) do
     t.decimal "amount", precision: 8, scale: 2, default: "0.0"
     t.text "description"
     t.integer "quantity"
+    t.string "stripe_price_id"
     t.bigint "project_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -88,6 +89,16 @@ ActiveRecord::Schema.define(version: 2021_01_20_170832) do
     t.datetime "expires_at"
     t.string "status", default: "active"
     t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.string "subscription_id"
+    t.bigint "user_id", null: false
+    t.bigint "perk_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["perk_id"], name: "index_subscriptions_on_perk_id"
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -121,4 +132,6 @@ ActiveRecord::Schema.define(version: 2021_01_20_170832) do
   add_foreign_key "comments", "users"
   add_foreign_key "perks", "projects"
   add_foreign_key "projects", "users"
+  add_foreign_key "subscriptions", "perks"
+  add_foreign_key "subscriptions", "users"
 end

@@ -6,21 +6,15 @@ class CreatePerkPlansJob < ApplicationJob
     key = project.user.access_code
     Stripe.api_key = key
 
-    prod = Stripe::Product.create({
-                                    name: project.title,
-                                    description: project.description
-                                  })
+    prod = Stripe::Product.create(name: project.title)
 
     project.perks.each do |perk|
-      Stripe::Price.create(
-        currency: 'usd',
-        unit_amount: (perk.amount.to_r * 100).to_i,
-        recurring: {
-          interval: 'month'
-        },
-        nickname: "#{perk.title.parameterize}-perk_#{perk.id}",
-        product: prod.id
-      )
+      price = Stripe::Price.create(currency: 'usd',
+                                   unit_amount: (perk.amount.to_r * 100).to_i,
+                                   recurring: { interval: 'month' },
+                                   nickname: "#{perk.title.parameterize}-perk_#{perk.id}",
+                                   product: prod.id)
+      perk.update(stripe_price_id: price.id)
     end
 
     # project.perks.each do |perk|
