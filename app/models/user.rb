@@ -7,6 +7,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :omniauthable, omniauth_providers: [:stripe_connect]
   has_many :projects, dependent: :destroy
+  has_many :subscriptions
 
   def can_receive_payments?
     uid? && provider? && access_code? && publishable_key?

@@ -4,61 +4,29 @@ class SubscriptionsController < ApplicationController
   end
 
   def create
-    pp "="*200
     @project = Project.find(params[:project])
-    key = @project.user.uid
-    Stripe.api_key = @project.user.access_code
+    Stripe.api_key = stripe_api_key
 
-    perk_id = params[:perk]
-    # plan = Stripe::Plan.retrieve(plan_id)
-    token = params[:stripeToken]
+    if current_user.stripe_id?
+      customer = current_user.stripe_id
+    else
+      customer = Stripe::CustomerCreateService.perform(current_user: current_user)
 
-    customer = Stripe::Customer.create(email: current_user.email)
+      Stripe::PaymentMethodAttachService.perform({ customer: customer,
+                                                   payment_method: payment_method})
 
-    charge = Stripe::Charge.create({
-                                     amount: 999,
-                                     currency: 'usd',
-                                     description: 'Example charge',
-                                     source: token,
-                                   })
+      Stripe::CustomerUpdateService.perform({ customer: customer,
+                                              payment_method: payment_method})
 
-    pp charge
+      current_user.update(update_stripe_fields(customer))
+    end
 
-    # customer = current_user.stripe_id? ? Stripe::Customer.retrieve(current_user.stripe_id) : Stripe::Customer.create(email: current_user.email, source: token)
-    #
-    # pp "CUSTOMER_"*5, customer
+    stripe_subscription = Stripe::SubscriptionCreateService.perform({ customer: customer,
+                                                      price_id: perk.stripe_price_id,
+                                                      stripe_account: key })
 
-    # sub = Stripe::Subscription.create({
-    #                                     customer: customer,
-    #                                     items: [
-    #                                       { price: perk_id }
-    #                                     ],
-    #                                     expand: ["latest_invoice.payment_intent"],
-    #                                     application_fee_percent: 10
-    #                                   },
-    #                                   stripe_account: key)
-    # pp "*"*100, sub
-
-    # @subscription = Subscription.new(
-    #   subscription_id: sub.id,
-    #   user: current_user,
-    #   perk: plan_id
-    # )
-
-    # options = {
-    #   stripe_id: customer.id,
-    #   subscribed: true
-    #   # stripe_subscription_id: subscription.id
-    # }
-    #
-    # options.merge!(
-    #   card_last4: params[:user][:card_last4],
-    #   card_exp_month: params[:user][:card_exp_month],
-    #   card_exp_year: params[:user][:card_exp_year],
-    #   card_type: params[:user][:card_brand]
-    # )
-    #
-    # current_user.update(options)
+    subscription = current_user.subscriptions.new(subscription_params(stripe_subscription))
+    subscription.save!
 
     redirect_to root_path, notice: 'Your subscription was setup successfully!'
   end
@@ -67,8 +35,43 @@ class SubscriptionsController < ApplicationController
     subscription_to_remove = params[:id]
     customer = Stripe::Customer.retrieve(current_user.stripe_id)
     customer.subscriptions.retrieve(subscription_to_remove).delete
-    current_user.subscribed = false
+    # current_user.subscribed = false
 
     redirect_to root_path, notice: 'Your subscription has been canceled'
+  end
+
+  private
+
+  def stripe_api_key
+    @project.user.access_code
+  end
+
+  def perk
+    Perk.find(params[:plan])
+  end
+
+  def payment_method
+    params[:paymentMethod].presence
+  end
+
+  def key
+    @project.user.uid
+  end
+
+  def update_stripe_fields(customer)
+    {
+      stripe_id: customer.id,
+      card_last4: params[:user][:card_last4],
+      card_exp_month: params[:user][:card_exp_month],
+      card_exp_year: params[:user][:card_exp_year],
+      card_type: params[:user][:card_brand]
+    }
+  end
+
+  def subscription_params(sub)
+    {
+      subscription_id: sub.id,
+      perk: perk
+    }
   end
 end

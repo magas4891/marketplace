@@ -60,7 +60,7 @@
             <% if user_signed_in? && perk.project.user_id == current_user.id %>
               <em class="block text-sm text-center">Sorry, You can't back your own idea</em>
             <% else %>
-              <%= link_to "Back this idea for #{number_to_currency(perk.amount)} /mo", new_subscription_path(amount: perk.amount, project: project, perk: perk.stripe_price_id), class: "btn btn-default btn-expanded" %>
+              <%= link_to "Back this idea for #{number_to_currency(perk.amount)} /mo", new_subscription_path(project: project, perk: perk), class: "btn btn-default btn-expanded" %>
             <% end %>
           </div>
         <% end %>

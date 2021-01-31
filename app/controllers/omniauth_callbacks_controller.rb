@@ -1,7 +1,6 @@
 class OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def stripe_connect
     auth_data = request.env['omniauth.auth']
-    pp ">"*50, auth_data, "<"*50
     @user = current_user
     if @user.persisted?
       @user.provider = auth_data.provider

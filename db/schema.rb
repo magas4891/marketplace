@@ -117,13 +117,10 @@ ActiveRecord::Schema.define(version: 2021_01_22_075006) do
     t.string "access_code"
     t.string "publishable_key"
     t.string "stripe_id"
-    t.string "stripe_subscription_id"
-    t.boolean "subscribed"
     t.string "card_last4"
     t.string "card_exp_month"
     t.string "card_exp_year"
     t.string "card_type"
-    t.text "perk_subscriptions", default: [], array: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
