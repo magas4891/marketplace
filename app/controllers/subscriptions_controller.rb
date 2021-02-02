@@ -33,9 +33,8 @@ class SubscriptionsController < ApplicationController
 
   def destroy
     subscription_to_remove = params[:id]
-    customer = Stripe::Customer.retrieve(current_user.stripe_id)
-    customer.subscriptions.retrieve(subscription_to_remove).delete
-    # current_user.subscribed = false
+    Stripe::SubscriptionDeleteService.perform({ subscription_id: subscription_to_remove })
+    current_user.subscriptions.find_by_subscription_id(subscription_to_remove).delete
 
     redirect_to root_path, notice: 'Your subscription has been canceled'
   end

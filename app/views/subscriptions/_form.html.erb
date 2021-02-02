@@ -1,6 +1,7 @@
 <%= form_with model: current_user,
               url: subscription_url,
               method: :post,
+              local: true,
               html: { id: 'payment-form', class: 'stripe-form'},
               data: { stripe_key: project.user.publishable_key } do %>
   <div>

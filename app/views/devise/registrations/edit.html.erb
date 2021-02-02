@@ -67,20 +67,17 @@
     </div>
 
     <% if resource.subscriptions.any? %>
-      <% customer = Stripe::Customer.retrieve(current_user.stripe_id) %>
-      <% if customer.subscriptions.any? %>
-        <div class="p-6 mt-10 text-gray-900 bg-white rounded shadow-lg">
-          <h4 class="font-bold text-gray-900">Active subscriptions</h4>
-          <ul>
-            <% customer.subscriptions.list.data.each do |sub| %>
-              <li class="flex items-center justify-between py-4 border-b">
-                <div><%= sub.plan.nickname %></div>
-                <%= link_to "Cancel Subscription", subscription_path(id: sub.id, plan_id: sub.plan.id), method: :delete, data: { confirm: "Are you sure?" } %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
+      <div class="p-6 mt-10 text-gray-900 bg-white rounded shadow-lg">
+        <h4 class="font-bold text-gray-900">Active subscriptions</h4>
+        <ul>
+          <% customer_help(current_user).each do |sub| %>
+            <li class="flex items-center justify-between py-4 border-b">
+              <div><%= sub.plan.nickname %></div>
+              <%= link_to "Cancel Subscription", subscription_path(id: sub.id, plan_id: sub.plan.id), method: :delete, data: { confirm: "Are you sure?" } %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
     <% end %>
   </div>
 </div>
