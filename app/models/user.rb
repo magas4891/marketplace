@@ -8,6 +8,7 @@ class User < ApplicationRecord
          :omniauthable, omniauth_providers: [:stripe_connect]
   has_many :projects, dependent: :destroy
   has_many :subscriptions
+  has_many :perks, through: :subscriptions
 
   def can_receive_payments?
     uid? && provider? && access_code? && publishable_key?

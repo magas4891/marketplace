@@ -27,6 +27,7 @@ class SubscriptionsController < ApplicationController
 
     subscription = current_user.subscriptions.new(subscription_params(stripe_subscription))
     subscription.save!
+    project_increase_params
 
     redirect_to root_path, notice: 'Your subscription was setup successfully!'
   end
@@ -35,6 +36,7 @@ class SubscriptionsController < ApplicationController
     subscription_to_remove = params[:id]
     Stripe::SubscriptionDeleteService.perform({ subscription_id: subscription_to_remove })
     current_user.subscriptions.find_by_subscription_id(subscription_to_remove).delete
+    project_decrease_params
 
     redirect_to root_path, notice: 'Your subscription has been canceled'
   end
@@ -46,7 +48,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def perk
-    Perk.find(params[:plan])
+    @perk ||= Perk.find(params[:plan])
   end
 
   def payment_method
@@ -72,5 +74,17 @@ class SubscriptionsController < ApplicationController
       subscription_id: sub.id,
       perk: perk
     }
+  end
+
+  def project_increase_params
+    pp "*"*50, 'project_increase_params'
+    @project.backings_count += 1
+    @project.current_donation_amount += perk.amount
+    @project.save!
+  end
+
+  def project_decrease_params
+    @project.backings_count -= 1
+    @project.save!
   end
 end
